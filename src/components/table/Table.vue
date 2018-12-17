@@ -33,7 +33,7 @@
                                 'is-current-sort': currentSortColumn === column,
                                 'is-sortable': column.sortable
                             }"
-                            :style="{ width: column.width + 'px' }"
+                            :style="{ width: column.widthResized + 'px' }"
                             @click.stop="sort(column)">
                             <div
                                 class="th-wrap"
@@ -56,6 +56,19 @@
                                     both
                                     size="is-small"
                                     :class="{ 'is-desc': !isAsc }"/>
+                            </div>
+                            <div
+                                v-if="resizable && index < newColumns.length - 1"
+                                class="th-resize-handle"
+                                draggable="draggable"
+                                @dragstart="startColumnWidthResize($event)"
+                                @drag.stop.prevent="onColumnWidthResize($event, column)"
+                                @dragend="endColumnWidthResize($event)">
+                                <b-icon
+                                    icon="drag-vertical"
+                                    :pack="iconPack"
+                                    both
+                                    size="is-small" />
                             </div>
                         </th>
                     </tr>
@@ -261,7 +274,11 @@
                 default: 0
             },
             iconPack: String,
-            mobileSortPlaceholder: String
+            mobileSortPlaceholder: String,
+            resizable: {
+                type: Boolean,
+                default: false
+            }
         },
         data() {
             return {
@@ -273,6 +290,7 @@
                 newCheckedRows: [...this.checkedRows],
                 newCurrentPage: this.currentPage,
                 currentSortColumn: {},
+                thResizeGhost: null,
                 isAsc: true,
                 firstTimeSort: true, // Used by first time initSort
                 _isTable: true // Used by TableColumn
@@ -288,7 +306,8 @@
                     'is-hoverable': (
                         (this.hoverable || this.focusable) &&
                         this.visibleData.length
-                    )
+                    ),
+                    'is-resizable': this.resizable
                 }
             },
 
@@ -706,7 +725,35 @@
                         this.sort(column, true)
                     }
                 })
+            },
+
+            /**
+             * Initialize column width resizing.
+             */
+            startColumnWidthResize(e) {
+                this.thResizeGhost = e.target.cloneNode()
+                this.thResizeGhost.style.opacity = '0'
+                // this.thResizeGhost.style.pointerEvent = 'none'
+                this.$el.appendChild(this.thResizeGhost)
+                e.dataTransfer.setDragImage(this.thResizeGhost, 0, 0)
+            },
+
+            /**
+             * Resize column width.
+             */
+            onColumnWidthResize(e, column) {
+                if (e.x === 0 && e.y === 0) return
+                column.widthResized = e.target.offsetLeft + e.offsetX
+            },
+
+            /**
+             * Finishing column width resizing.
+             */
+            endColumnWidthResize(e) {
+                this.$el.removeChild(this.thResizeGhost)
+                this.thResizeGhost = null
             }
+
         },
 
         mounted() {

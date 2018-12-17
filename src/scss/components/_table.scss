@@ -36,6 +36,7 @@
         border-collapse: separate;
         th {
             font-weight: $weight-semibold;
+            position: relative;
             .th-wrap {
                 display: flex;
                 align-items: center;
@@ -56,6 +57,18 @@
                     justify-content: center;
                     text-align: center;
                 }
+            }
+            .th-resize-handle {
+                position: absolute;
+                z-index: 2;
+                right: 0;
+                top: 0;
+                height: 100%;
+                width: 1rem;
+                display: flex;
+                align-items: center;
+                cursor: ew-resize;
+                opacity: 1;
             }
             &.is-current-sort {
                 border-color: $grey;

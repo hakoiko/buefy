@@ -28,7 +28,8 @@
         },
         data() {
             return {
-                newKey: this.customKey || this.label
+                newKey: this.customKey || this.label,
+                widthResized: this.width
             }
         },
         computed: {

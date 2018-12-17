@@ -17,6 +17,9 @@
                 <b-switch v-model="isFocusable">Focusable</b-switch>
             </div>
             <div class="control">
+                <b-switch v-model="isResizable">Resizable</b-switch>
+            </div>
+            <div class="control">
                 <b-switch v-model="isLoading">Loading state</b-switch>
             </div>
             <div class="control">
@@ -35,7 +38,8 @@
             :hoverable="isHoverable"
             :loading="isLoading"
             :focusable="isFocusable"
-            :mobile-cards="hasMobileCards">
+            :mobile-cards="hasMobileCards"
+            :resizable="isResizable">
 
             <template slot-scope="props">
                 <b-table-column field="id" label="ID" width="40" numeric>
@@ -101,6 +105,7 @@
                 isHoverable: false,
                 isFocusable: false,
                 isLoading: false,
+                isResizable: false,
                 hasMobileCards: true
             }
         }
