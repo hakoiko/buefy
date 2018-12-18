@@ -8046,6 +8046,8 @@ label.panel-block {
         display: flex;
         align-items: center;
         cursor: ew-resize;
+        opacity: 0; }
+      .b-table .table th:hover .th-resize-handle {
         opacity: 1; }
       .b-table .table th.is-current-sort {
         border-color: #7a7a7a;

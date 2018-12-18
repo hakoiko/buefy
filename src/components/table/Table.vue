@@ -65,7 +65,7 @@
                                 @drag.stop.prevent="onColumnWidthResize($event, column)"
                                 @dragend="endColumnWidthResize($event)">
                                 <b-icon
-                                    icon="drag-vertical"
+                                    icon="arrows-h"
                                     :pack="iconPack"
                                     both
                                     size="is-small" />
