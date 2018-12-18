@@ -8118,6 +8118,9 @@ label.panel-block {
           font-weight: 600;
           padding-right: 0.5em;
           text-align: left; } }
+    .b-table .table.has-mobile-cards.is-resizable {
+      min-width: 100%;
+      width: max-content; }
   .b-table .level {
     padding-bottom: 1.5rem; }
   .b-table.is-loading {
