@@ -15,7 +15,10 @@
             customKey: [String, Number],
             field: String,
             meta: [String, Number, Boolean, Function, Object, Array, Symbol],
-            width: [Number, String],
+            width: {
+                type: [Number, String],
+                default: 0
+            },
             numeric: Boolean,
             centered: Boolean,
             sortable: Boolean,
@@ -29,7 +32,7 @@
         data() {
             return {
                 newKey: this.customKey || this.label,
-                widthResized: this.width
+                widthResized: this.width || 0
             }
         },
         computed: {

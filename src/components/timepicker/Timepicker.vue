@@ -54,6 +54,19 @@
                             {{ minute.label }}
                         </option>
                     </b-select>
+                    <span class="control is-colon">:</span>
+                    <b-select
+                        v-model="secondsSelected"
+                        @change.native="onSecondsChange($event.target.value)"
+                        placeholder="00"
+                        v-if="useSecond">
+                        <option
+                            v-for="second in seconds"
+                            :value="second.value"
+                            :key="second.value">
+                            {{ second.label }}
+                        </option>
+                    </b-select>
                     <b-select
                         v-model="meridienSelected"
                         @change.native="onMeridienChange($event.target.value)"
@@ -205,6 +218,10 @@
                 type: Number,
                 default: 1
             },
+            incrementSeconds: {
+                type: Number,
+                default: 1
+            },
             timeFormatter: {
                 type: Function,
                 default: (date, vm) => {
@@ -232,13 +249,18 @@
                 }
             },
             position: String,
-            unselectableTimes: Array
+            unselectableTimes: Array,
+            useSecond: {
+                type: Boolean,
+                default: false
+            }
         },
         data() {
             return {
                 dateSelected: this.value,
                 hoursSelected: null,
                 minutesSelected: null,
+                secondsSelected: null,
                 meridienSelected: null,
                 _elementRef: 'input',
                 _isTimepicker: true
@@ -282,6 +304,17 @@
                     })
                 }
                 return minutes
+            },
+
+            seconds() {
+                const seconds = []
+                for (let i = 0; i < 60; i += this.incrementSeconds) {
+                    seconds.push({
+                        label: formatNumber(i),
+                        value: i
+                    })
+                }
+                return seconds
             },
 
             meridiens() {
@@ -341,14 +374,20 @@
                         }
                     }
                 }
-                this.updateDateSelected(this.hoursSelected, this.minutesSelected, value)
+                this.updateDateSelected(
+                    this.hoursSelected,
+                    this.minutesSelected,
+                    value,
+                    this.secondsSelected
+                )
             },
 
             onHoursChange(value) {
                 this.updateDateSelected(
                     parseInt(value, 10),
                     this.minutesSelected,
-                    this.meridienSelected
+                    this.meridienSelected,
+                    this.secondsSelected
                 )
             },
 
@@ -356,11 +395,21 @@
                 this.updateDateSelected(
                     this.hoursSelected,
                     parseInt(value, 10),
-                    this.meridienSelected
+                    this.meridienSelected,
+                    this.secondsSelected
                 )
             },
 
-            updateDateSelected(hours, minutes, meridiens) {
+            onSecondsChange(value) {
+                this.updateDateSelected(
+                    this.hoursSelected,
+                    this.minutesSelected,
+                    this.meridienSelected,
+                    parseInt(value, 10)
+                )
+            },
+
+            updateDateSelected(hours, minutes, meridiens, seconds = 0) {
                 if (hours != null && minutes != null &&
                     ((!this.isHourFormat24 && meridiens !== null) || this.isHourFormat24)) {
                     if (this.dateSelected && !isNaN(this.dateSelected)) {
@@ -368,7 +417,7 @@
                     } else {
                         this.dateSelected = new Date()
                         this.dateSelected.setMilliseconds(0)
-                        this.dateSelected.setSeconds(0)
+                        this.dateSelected.setSeconds(seconds)
                     }
                     this.dateSelected.setHours(hours)
                     this.dateSelected.setMinutes(minutes)
@@ -380,9 +429,11 @@
                     this.hoursSelected = value.getHours()
                     this.minutesSelected = value.getMinutes()
                     this.meridienSelected = value.getHours() >= 12 ? PM : AM
+                    this.secondsSelected = value.getSeconds()
                 } else {
                     this.hoursSelected = null
                     this.minutesSelected = null
+                    this.secondsSelected = null
                     this.meridienSelected = AM
                 }
             },
@@ -448,6 +499,38 @@
                     }
                 }
                 return disabled
+            },
+
+            isSecondDisabled(second) {
+                let disabled = false
+                if (this.hoursSelected !== null) {
+                    if (this.isHourDisabled(this.hoursSelected)) {
+                        disabled = true
+                    } else {
+                        if (this.minTime) {
+                            const minHours = this.minTime.getHours()
+                            const minMinutes = this.minTime.getMinutes()
+                            disabled = this.hoursSelected === minHours && second < minMinutes
+                        }
+                        if (this.maxTime) {
+                            if (!disabled) {
+                                const maxHours = this.maxTime.getHours()
+                                const minMinutes = this.maxTime.getMinutes()
+                                disabled = this.hoursSelected === maxHours && second > minMinutes
+                            }
+                        }
+                    }
+                    if (this.unselectableTimes) {
+                        if (!disabled) {
+                            const unselectable = this.unselectableTimes.filter((time) => {
+                                return time.getHours() === this.hoursSelected &&
+                                    time.getMinutes() === second
+                            })
+                            disabled = unselectable.length > 0
+                        }
+                    }
+                }
+                return false
             },
 
             /*

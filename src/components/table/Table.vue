@@ -115,10 +115,11 @@
                             />
                             <template v-else>
                                 <BTableColumn
-                                    v-for="column in newColumns"
+                                    v-for="(column, index) in newColumns"
                                     v-bind="column"
                                     :key="column.field"
                                     internal>
+                                    <span>{{ column.field }} : {{ index }}</span>
                                     <span
                                         v-if="column.renderHtml"
                                         v-html="getValueByPath(row, column.field)"
@@ -733,7 +734,6 @@
             startColumnWidthResize(e) {
                 this.thResizeGhost = e.target.cloneNode()
                 this.thResizeGhost.style.opacity = '0'
-                // this.thResizeGhost.style.pointerEvent = 'none'
                 this.$el.appendChild(this.thResizeGhost)
                 e.dataTransfer.setDragImage(this.thResizeGhost, 0, 0)
             },

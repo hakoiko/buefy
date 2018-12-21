@@ -8891,6 +8891,7 @@ var _components;
 //
 //
 //
+//
 
 
 
@@ -9460,7 +9461,6 @@ var _components;
         startColumnWidthResize: function startColumnWidthResize(e) {
             this.thResizeGhost = e.target.cloneNode();
             this.thResizeGhost.style.opacity = '0';
-            // this.thResizeGhost.style.pointerEvent = 'none'
             this.$el.appendChild(this.thResizeGhost);
             e.dataTransfer.setDragImage(this.thResizeGhost, 0, 0);
         },
@@ -9863,7 +9863,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         customKey: [String, Number],
         field: String,
         meta: [String, Number, Boolean, Function, Object, Array, __WEBPACK_IMPORTED_MODULE_0_babel_runtime_core_js_symbol___default.a],
-        width: [Number, String],
+        width: {
+            type: [Number, String],
+            default: 0
+        },
         numeric: Boolean,
         centered: Boolean,
         sortable: Boolean,
@@ -9877,7 +9880,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     data: function data() {
         return {
             newKey: this.customKey || this.label,
-            widthResized: this.width
+            widthResized: this.width || 0
         };
     },
 
@@ -10110,13 +10113,13 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     })], 1) : _vm._e(), _vm._v(" "), (_vm.$scopedSlots.default) ? _vm._t("default", null, {
       row: row,
       index: index
-    }) : _vm._l((_vm.newColumns), function(column) {
+    }) : _vm._l((_vm.newColumns), function(column, index) {
       return _c('BTableColumn', _vm._b({
         key: column.field,
         attrs: {
           "internal": ""
         }
-      }, 'BTableColumn', column, false), [(column.renderHtml) ? _c('span', {
+      }, 'BTableColumn', column, false), [_c('span', [_vm._v(_vm._s(column.field) + " : " + _vm._s(index))]), _vm._v(" "), (column.renderHtml) ? _c('span', {
         domProps: {
           "innerHTML": _vm._s(_vm.getValueByPath(row, column.field))
         }
@@ -11306,6 +11309,19 @@ var _components;
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -11403,6 +11419,10 @@ var timeParser = function timeParser(date, vm) {
             type: Number,
             default: 1
         },
+        incrementSeconds: {
+            type: Number,
+            default: 1
+        },
         timeFormatter: {
             type: Function,
             default: function _default(date, vm) {
@@ -11430,13 +11450,18 @@ var timeParser = function timeParser(date, vm) {
             }
         },
         position: String,
-        unselectableTimes: Array
+        unselectableTimes: Array,
+        useSecond: {
+            type: Boolean,
+            default: false
+        }
     },
     data: function data() {
         return {
             dateSelected: this.value,
             hoursSelected: null,
             minutesSelected: null,
+            secondsSelected: null,
             meridienSelected: null,
             _elementRef: 'input',
             _isTimepicker: true
@@ -11479,6 +11504,16 @@ var timeParser = function timeParser(date, vm) {
                 });
             }
             return minutes;
+        },
+        seconds: function seconds() {
+            var seconds = [];
+            for (var i = 0; i < 60; i += this.incrementSeconds) {
+                seconds.push({
+                    label: formatNumber(i),
+                    value: i
+                });
+            }
+            return seconds;
         },
         meridiens: function meridiens() {
             return [AM, PM];
@@ -11535,22 +11570,27 @@ var timeParser = function timeParser(date, vm) {
                     }
                 }
             }
-            this.updateDateSelected(this.hoursSelected, this.minutesSelected, value);
+            this.updateDateSelected(this.hoursSelected, this.minutesSelected, value, this.secondsSelected);
         },
         onHoursChange: function onHoursChange(value) {
-            this.updateDateSelected(parseInt(value, 10), this.minutesSelected, this.meridienSelected);
+            this.updateDateSelected(parseInt(value, 10), this.minutesSelected, this.meridienSelected, this.secondsSelected);
         },
         onMinutesChange: function onMinutesChange(value) {
-            this.updateDateSelected(this.hoursSelected, parseInt(value, 10), this.meridienSelected);
+            this.updateDateSelected(this.hoursSelected, parseInt(value, 10), this.meridienSelected, this.secondsSelected);
+        },
+        onSecondsChange: function onSecondsChange(value) {
+            this.updateDateSelected(this.hoursSelected, this.minutesSelected, this.meridienSelected, parseInt(value, 10));
         },
         updateDateSelected: function updateDateSelected(hours, minutes, meridiens) {
+            var seconds = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+
             if (hours != null && minutes != null && (!this.isHourFormat24 && meridiens !== null || this.isHourFormat24)) {
                 if (this.dateSelected && !isNaN(this.dateSelected)) {
                     this.dateSelected = new Date(this.dateSelected);
                 } else {
                     this.dateSelected = new Date();
                     this.dateSelected.setMilliseconds(0);
-                    this.dateSelected.setSeconds(0);
+                    this.dateSelected.setSeconds(seconds);
                 }
                 this.dateSelected.setHours(hours);
                 this.dateSelected.setMinutes(minutes);
@@ -11561,9 +11601,11 @@ var timeParser = function timeParser(date, vm) {
                 this.hoursSelected = value.getHours();
                 this.minutesSelected = value.getMinutes();
                 this.meridienSelected = value.getHours() >= 12 ? PM : AM;
+                this.secondsSelected = value.getSeconds();
             } else {
                 this.hoursSelected = null;
                 this.minutesSelected = null;
+                this.secondsSelected = null;
                 this.meridienSelected = AM;
             }
         },
@@ -11629,6 +11671,38 @@ var timeParser = function timeParser(date, vm) {
                 }
             }
             return disabled;
+        },
+        isSecondDisabled: function isSecondDisabled(second) {
+            var _this3 = this;
+
+            var disabled = false;
+            if (this.hoursSelected !== null) {
+                if (this.isHourDisabled(this.hoursSelected)) {
+                    disabled = true;
+                } else {
+                    if (this.minTime) {
+                        var minHours = this.minTime.getHours();
+                        var minMinutes = this.minTime.getMinutes();
+                        disabled = this.hoursSelected === minHours && second < minMinutes;
+                    }
+                    if (this.maxTime) {
+                        if (!disabled) {
+                            var maxHours = this.maxTime.getHours();
+                            var _minMinutes2 = this.maxTime.getMinutes();
+                            disabled = this.hoursSelected === maxHours && second > _minMinutes2;
+                        }
+                    }
+                }
+                if (this.unselectableTimes) {
+                    if (!disabled) {
+                        var unselectable = this.unselectableTimes.filter(function (time) {
+                            return time.getHours() === _this3.hoursSelected && time.getMinutes() === second;
+                        });
+                        disabled = unselectable.length > 0;
+                    }
+                }
+            }
+            return false;
         },
 
 
@@ -11822,7 +11896,32 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         "value": minute.value
       }
     }, [_vm._v("\n                        " + _vm._s(minute.label) + "\n                    ")])
-  })), _vm._v(" "), (!_vm.isHourFormat24) ? _c('b-select', {
+  })), _vm._v(" "), _c('span', {
+    staticClass: "control is-colon"
+  }, [_vm._v(":")]), _vm._v(" "), (_vm.useSecond) ? _c('b-select', {
+    attrs: {
+      "placeholder": "00"
+    },
+    nativeOn: {
+      "change": function($event) {
+        _vm.onSecondsChange($event.target.value)
+      }
+    },
+    model: {
+      value: (_vm.secondsSelected),
+      callback: function($$v) {
+        _vm.secondsSelected = $$v
+      },
+      expression: "secondsSelected"
+    }
+  }, _vm._l((_vm.seconds), function(second) {
+    return _c('option', {
+      key: second.value,
+      domProps: {
+        "value": second.value
+      }
+    }, [_vm._v("\n                        " + _vm._s(second.label) + "\n                    ")])
+  })) : _vm._e(), _vm._v(" "), (!_vm.isHourFormat24) ? _c('b-select', {
     attrs: {
       "disabled": _vm.disabled
     },
