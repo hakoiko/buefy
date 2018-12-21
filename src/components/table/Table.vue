@@ -115,11 +115,10 @@
                             />
                             <template v-else>
                                 <BTableColumn
-                                    v-for="(column, index) in newColumns"
+                                    v-for="column in newColumns"
                                     v-bind="column"
                                     :key="column.field"
                                     internal>
-                                    <span>{{ column.field }} : {{ index }}</span>
                                     <span
                                         v-if="column.renderHtml"
                                         v-html="getValueByPath(row, column.field)"

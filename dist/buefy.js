@@ -8891,7 +8891,6 @@ var _components;
 //
 //
 //
-//
 
 
 
@@ -10113,13 +10112,13 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     })], 1) : _vm._e(), _vm._v(" "), (_vm.$scopedSlots.default) ? _vm._t("default", null, {
       row: row,
       index: index
-    }) : _vm._l((_vm.newColumns), function(column, index) {
+    }) : _vm._l((_vm.newColumns), function(column) {
       return _c('BTableColumn', _vm._b({
         key: column.field,
         attrs: {
           "internal": ""
         }
-      }, 'BTableColumn', column, false), [_c('span', [_vm._v(_vm._s(column.field) + " : " + _vm._s(index))]), _vm._v(" "), (column.renderHtml) ? _c('span', {
+      }, 'BTableColumn', column, false), [(column.renderHtml) ? _c('span', {
         domProps: {
           "innerHTML": _vm._s(_vm.getValueByPath(row, column.field))
         }
