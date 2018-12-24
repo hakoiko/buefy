@@ -4995,6 +4995,10 @@ var _components;
         indicators: {
             type: String,
             default: 'dots'
+        },
+        keepTime: {
+            type: Boolean,
+            default: true
         }
     },
     data: function data() {
@@ -5055,6 +5059,14 @@ var _components;
                 month: currentDate.getMonth(),
                 year: currentDate.getFullYear()
             };
+
+            if (this.keepTime) {
+                value.setHours(this.value.getHours());
+                value.setMinutes(this.value.getMinutes());
+                value.setSeconds(this.value.getSeconds());
+                value.setMilliseconds(this.value.getMilliseconds());
+            }
+
             this.$emit('input', value);
             if (this.$refs.dropdown) {
                 this.$refs.dropdown.isActive = false;
