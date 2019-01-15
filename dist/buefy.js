@@ -11605,6 +11605,7 @@ var timeParser = function timeParser(date, vm) {
                 }
                 this.dateSelected.setHours(hours);
                 this.dateSelected.setMinutes(minutes);
+                this.dateSelected.setSeconds(seconds);
             }
         },
         updateInternalState: function updateInternalState(value) {

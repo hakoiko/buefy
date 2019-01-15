@@ -421,6 +421,7 @@
                     }
                     this.dateSelected.setHours(hours)
                     this.dateSelected.setMinutes(minutes)
+                    this.dateSelected.setSeconds(seconds)
                 }
             },
 
