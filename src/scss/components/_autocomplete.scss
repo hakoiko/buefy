@@ -10,8 +10,9 @@
         }
     }
     .dropdown-content {
-        overflow: auto;
+        overflow-y: auto;
         max-height: 200px;
+        overflow-x: scroll;
     }
     .dropdown-item {
         white-space: nowrap;
