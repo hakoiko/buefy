@@ -16,7 +16,7 @@
     .dropdown-item {
         white-space: nowrap;
         overflow: hidden;
-        text-overflow: ellipsis;
+        // text-overflow: ellipsis;
         &.is-hovered {
             background: $dropdown-item-hover-background-color;
             color: $dropdown-item-hover-color;
