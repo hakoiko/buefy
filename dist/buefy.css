@@ -7041,12 +7041,11 @@ label.panel-block {
       top: auto;
       bottom: 100%; }
   .autocomplete .dropdown-content {
-    overflow: auto;
-    max-height: 200px; }
+    overflow-y: auto;
+    max-height: 200px;
+    overflow-x: scroll; }
   .autocomplete .dropdown-item, .autocomplete .dropdown .dropdown-menu .has-link a, .dropdown .dropdown-menu .has-link .autocomplete a {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis; }
+    white-space: nowrap; }
     .autocomplete .dropdown-item.is-hovered, .autocomplete .dropdown .dropdown-menu .has-link a.is-hovered, .dropdown .dropdown-menu .has-link .autocomplete a.is-hovered {
       background: whitesmoke;
       color: #0a0a0a; }

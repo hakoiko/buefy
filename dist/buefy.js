@@ -11908,9 +11908,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         "value": minute.value
       }
     }, [_vm._v("\n                        " + _vm._s(minute.label) + "\n                    ")])
-  })), _vm._v(" "), _c('span', {
+  })), _vm._v(" "), (_vm.useSecond) ? _c('span', {
     staticClass: "control is-colon"
-  }, [_vm._v(":")]), _vm._v(" "), (_vm.useSecond) ? _c('b-select', {
+  }, [_vm._v(":")]) : _vm._e(), _vm._v(" "), (_vm.useSecond) ? _c('b-select', {
     attrs: {
       "placeholder": "00"
     },
