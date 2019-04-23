@@ -54,7 +54,7 @@
                             {{ minute.label }}
                         </option>
                     </b-select>
-                    <span class="control is-colon">:</span>
+                    <span class="control is-colon" v-if="useSecond">:</span>
                     <b-select
                         v-model="secondsSelected"
                         @change.native="onSecondsChange($event.target.value)"
